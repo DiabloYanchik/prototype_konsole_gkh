@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ЖКХ Консоль — Прототип (Оператор УК)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; }
+  .sidebar-item.active { background: #f3e8ff; color: #7c3aed; font-weight: 600; }
+  .kpi-large { min-height: 120px; }
+  .heat-badge { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; font-weight: 700; font-size: 14px; }
+  .heat-1 { background: #dcfce7; color: #166534; }
+  .heat-2 { background: #fef9c3; color: #854d0e; }
+  .heat-3 { background: #ffedd5; color: #9a3412; }
+  .heat-4 { background: #fee2e2; color: #991b1b; }
+  .heat-5 { background: #fecaca; color: #7f1d1d; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .tag { background: #ede9fe; color: #5b21b6; padding: 2px 8px; border-radius: 9999px; font-size: 12px; }
+  .status-active { background: #dcfce7; color: #166534; }
+  .status-broadcast { background: #dbeafe; color: #1e40af; }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+<div class="flex h-screen overflow-hidden">
+  <!-- Боковая панель  -->
+  <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+    <div class="p-4 border-b flex items-center gap-2">
+      <div class="w-8 h-8 bg-purple-600 rounded flex items-center justify-center text-white font-bold">Ж</div>
+      <div>
+        <div class="font-semibold">ЖКХ Консоль</div>
+        <div class="text-xs text-gray-500">Операционная панель</div>
+      </div>
+    </div>
+    <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
+      <a href="#" data-page="monitor" class="sidebar-item active flex items-center gap-3 px-3 py-2 rounded-lg text-sm">Монитор</a>
+      <a href="#" data-page="heat" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm">Градусник</a>
+      <a href="#" data-page="broadcasts" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm">Рассылки MAX</a>
+      <a href="#" data-page="dashboard" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm">Дашборд</a>
+      <a href="#" data-page="chats" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm">MAX чаты</a>
+      
+      <a href="#" data-page="statistics" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm">Статистика</a>
+      
+     <br>
+      <div class="pt-3 pb-1 px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Словари</div>
+      <a href="#" data-page="keys" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm">ЖКХ ключи</a>
+      <a href="#" data-page="moderation" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm">Слова модерации</a>
+    </nav>
+    <div class="p-4 border-t text-sm">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-700 font-semibold">TE</div>
+        <div>
+          <div class="font-medium">test role</div>
+          <div class="text-xs text-gray-500">Оператор УК</div>
+        </div>
+      </div>
+      <button class="mt-3 text-xs text-gray-500 hover:text-gray-700">Выйти</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 overflow-y-auto">
+    <!-- Дашбоард -->
+    <section id="dashboard" class="page  p-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-semibold">Дашборд</h1>
+          <p class="text-sm text-gray-500">Общая картина по работе MAX-бота и входящим обращениям.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <select class="border rounded-lg px-3 py-2 text-sm bg-white font-medium border-purple-300">
+            <option>Все УК / боты</option>
+            <option>Восточное УЖКС</option>
+          </select>
+          <div class="flex items-center border rounded-lg bg-white">
+            <button class="px-2">‹</button>
+            <span class="px-3 py-2 text-sm font-medium">Октябрь 2026</span>
+            <button class="px-2">›</button>
+          </div>
+          <button class="border rounded-lg px-3 py-2 text-sm bg-white">Обновить</button>
+          <span class="text-xs text-gray-400">Обновлено: 20.10.2026, 10:05</span>
+        </div>
+      </div>
+
+      <!--KPI -->
+      <div class="grid grid-cols-1 gap-4 mb-6">
+        <div class="grid grid-cols-3 gap-4">
+            <div class="bg-white border rounded-xl p-6">
+              <div class="text-sm text-gray-500 mb-1">Непрочитано</div>
+              <div class="text-5xl font-bold">1 791</div>
+              <div class="text-xs text-purple-600 mt-2">Нажмите, чтобы открыть в Мониторе →</div>
+            </div>
+            <div class="bg-white border rounded-xl p-6">
+              <div class="text-sm text-gray-500 mb-1">Ошибки доставки</div>
+              <div class="text-5xl font-bold text-black-600">0</div>
+            </div>
+            <div class="bg-white border rounded-xl p-5">
+              <div class="font-semibold mb-3 text-red-600">Проблемы и внимание</div>
+                <div class="text-sm space-y-2">
+                  <div class="flex justify-between"><span>Чаты без ответа</span><span class="font-bold text-red-600">3 195</span></div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- График -->
+      <div class="bg-white border rounded-xl p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+          <div>
+            <div class="font-semibold">Активность MAX</div>
+            <div class="text-sm text-gray-500">Сообщения и непрочитанные по дням</div>
+          </div>
+          <div class="flex gap-4 text-sm">
+            <span class="flex items-center gap-1"><span class="w-3 h-3 bg-purple-500 rounded"></span> Все сообщения</span>
+            <span class="flex items-center gap-1"><span class="w-3 h-3 bg-red-400 rounded"></span> Непрочитанные</span>
+          </div>
+        </div>
+        <div class="h-48 flex items-end gap-2 px-2">
+          <div class="flex-1 bg-purple-500 rounded-t" style="height: 80%"></div>
+          <div class="flex-1 bg-purple-400 rounded-t" style="height: 25%"></div>
+          <div class="flex-1 bg-purple-300 rounded-t" style="height: 10%"></div>
+          <div class="flex-1 bg-purple-500 rounded-t" style="height: 15%"></div>
+          <div class="flex-1 bg-purple-400 rounded-t" style="height: 12%"></div>
+          <div class="flex-1 bg-purple-300 rounded-t" style="height: 8%"></div>
+          <div class="flex-1 bg-purple-600 rounded-t" style="height: 70%"></div>
+          <div class="flex-1 bg-purple-600 rounded-t" style="height: 75%"></div>
+          <div class="flex-1 bg-purple-500 rounded-t" style="height: 55%"></div>
+          <div class="flex-1 bg-purple-400 rounded-t" style="height: 10%"></div>
+          <div class="flex-1 bg-purple-300 rounded-t" style="height: 5%"></div>
+          <div class="flex-1 bg-purple-500 rounded-t" style="height: 38%"></div>
+          <div class="flex-1 bg-purple-300 rounded-t" style="height: 8%"></div>
+          <div class="flex-1 bg-purple-400 rounded-t" style="height: 12%"></div>
+          <div class="flex-1 bg-purple-300 rounded-t" style="height: 6%"></div>
+          <div class="flex-1 bg-purple-200 rounded-t ring-2 ring-purple-500" style="height: 4%" title="Сегодня"></div>
+        </div>
+        <div class="flex justify-between text-xs text-gray-400 mt-2 px-2">
+          <span>1 окт</span><span>7 окт</span><span>12 окт</span><span>20 окт (сегодня)</span>
+        </div>
+      </div>
+
+      <!-- KPIs внизу -->
+      <div class="grid grid-cols-3 gap-4">
+        <div class="bg-white border rounded-xl p-5">
+          <div class="text-sm text-gray-500">Сообщения за период</div>
+          <div class="text-3xl font-bold mt-1">4 436</div>
+        </div>
+        <div class="bg-white border rounded-xl p-5">
+          <div class="text-sm text-gray-500">Активные MAX-чаты</div>
+          <div class="text-3xl font-bold mt-1">330</div>
+        </div>
+        <div class="bg-white border rounded-xl p-5">
+          <div class="text-sm text-gray-500">Активные рассылки</div>
+          <div class="text-3xl font-bold mt-1">0</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Монитор -->
+    <section id="monitor" class="page active p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h1 class="text-2xl font-semibold">Монитор</h1>
+          <p class="text-sm text-gray-500">Диалоги, обращения и события в реальном времени.</p>
+        </div>
+        <div class="flex items-center gap-2 text-sm">
+          <span class="flex items-center gap-1 text-green-600"><span class="w-2 h-2 bg-green-500 rounded-full"></span> Онлайн · обновлено 10:11</span>
+        </div>
+      </div>
+
+      <div class="flex gap-2 mb-4">
+        <button id="tab-super" class="px-4 py-2 rounded-lg bg-purple-600 text-white text-sm font-medium" onclick="switchMonitor('super')">Суперчат ЖКХ</button>
+        <button id="tab-all" class="px-4 py-2 rounded-lg bg-white border text-sm" onclick="switchMonitor('all')">Все чаты</button>
+        <div class="ml-auto flex items-center gap-2">
+          
+          <button id="tab-all" class="px-3 py-1 rounded-lg bg-white border text-sm" onclick="switchMonitor('all')">Фильтры _</button>
+         <!-- <button id="tab-all" class="px-3 py-1 rounded-lg bg-white border text-sm" onclick="switchMonitor('all')">Период: 30 дней _</button>-->
+        </div>
+      </div>
+
+      <div class="grid grid-cols-12 gap-4">
+        <!-- Left list -->
+        <div class="col-span-4 bg-white border rounded-xl overflow-hidden">
+          <div class="p-3 border-b flex items-center justify-between text-sm">
+            <span class="font-medium">Монитор</span>
+            <span class="text-gray-500">Всего: 30 · Непр: <span class="text-black-500 font-medium">340</span> Вн: <span class="text-red-500 font-medium">99</span></span>
+          </div>
+          <div class="p-3">
+            <input class="w-full border rounded-lg px-3 py-2 text-sm" placeholder="Поиск по чатам и сообщениям...">
+          </div>
+          <div class="divide-y max-h-[600px] overflow-y-auto">
+            <div class="p-3 hover:bg-gray-50 cursor-pointer flex gap-3">
+              <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-xs font-bold text-orange-700">1</div>
+              <div class="flex-1 min-w-0">
+                <div class="font-medium text-sm truncate">пер. Археолога Михаила Г...</div>
+                <div class="text-xs text-gray-500 truncate">Выходи на работу. Они тебя не уволят. Тебя просто убьют</div>
+              </div>
+              <div class="text-right">
+                <div class="text-xs text-gray-400">20.10</div>
+                <span class="tag text-xs">ЖКХ 5</span>
+              </div>
+            </div>
+            <div class="p-3 hover:bg-gray-50 cursor-pointer flex gap-3">
+              <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-xs font-bold text-orange-700">5</div>
+              <div class="flex-1 min-w-0">
+                <div class="font-medium text-sm truncate">ул. Карла Маркса, д. 5...</div>
+                <div class="text-xs text-gray-500 truncate">Да у них и зарплаты и пенсии не сравнятся с хухулей</div>
+              </div>
+              <div class="text-right">
+                <div class="text-xs text-gray-400">19.10</div>
+                <span class="tag text-xs">ЖКХ 11</span>
+              </div>
+            </div>
+            <div class="p-3 hover:bg-gray-50 cursor-pointer flex gap-3 bg-purple-50">
+              <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-xs font-bold text-purple-700">11</div>
+              <div class="flex-1 min-w-0">
+                <div class="font-medium text-sm truncate">пер. Археолога Михаила Ге...</div>
+                <div class="text-xs text-gray-500 truncate">Соседи, всем добрый вечер! Кто насрал мне под дверь? </div>
+              </div>
+              <div class="text-right">
+                <div class="text-xs text-gray-400">19.10</div>
+                <span class="tag text-xs">ЖКХ 3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Справа -->
+        <div class="col-span-8 space-y-4" id="monitor-right">
+          <!-- Суперчат -->
+          <div class="bg-white border rounded-xl p-5">
+            <div class="flex items-start justify-between mb-3">
+              <div>
+                <span class="inline-block bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded">Новое</span>
+                <span class="ml-2 font-medium">Восточное УЖКС · пер. Археолога Михаила Герасимова, д. 1, г. Иркутск</span>
+              </div>
+              <div class="text-xs text-gray-400">20.10.2026, 00:42</div>
+            </div>
+            <div class="text-sm mb-2"><span class="text-gray-500">Автор:</span> Эдвард Каллен</div>
+            <div class="text-sm mb-3">Подскажите пожалуйста номер <span class="bg-orange-100 text-orange-800 px-1 rounded">Беллы Свон</span></div>
+            <div class="flex gap-2">
+              <button class="border rounded-lg px-3 py-1.5 text-sm">Открыть в мониторе</button>
+              <button class="border rounded-lg px-3 py-1.5 text-sm">Ответить</button>
+              <button class="bg-green-600 text-white rounded-lg px-3 py-1.5 text-sm">Решено</button>
+              <button class="bg-purple-100 text-purple-700 rounded-lg px-3 py-1.5 text-sm">Просмотрено</button>
+            </div>
+          </div>
+
+          <div class="bg-white border rounded-xl p-5">
+            <div class="flex items-start justify-between mb-3">
+              <div>
+                <span class="inline-block bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded">Новое</span>
+                <span class="ml-2 font-medium">Восточное УЖКС · б-р. Гагарина, д. 72, г. Иркутск</span>
+              </div>
+              <div class="text-xs text-gray-400">19.10.2026, 23:18</div>
+            </div>
+            <div class="text-sm mb-2"><span class="text-gray-500">Автор:</span> Любовь</div>
+            <div class="text-sm mb-3"> БЛ**** ЧТО У ВАС ТУТ ПРОИСХОДИТ?!!! <span class="bg-orange-100 text-orange-800 px-1 rounded">сантехник</span> ХДЭ?! </div>
+            <div class="flex gap-2">
+              <button class="border rounded-lg px-3 py-1.5 text-sm">Открыть в мониторе</button>
+              <button class="border rounded-lg px-3 py-1.5 text-sm">Ответить</button>
+              <button class="bg-green-600 text-white rounded-lg px-3 py-1.5 text-sm">Решено</button>
+              <button class="bg-purple-100 text-purple-700 rounded-lg px-3 py-1.5 text-sm">Просмотрено</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Статистика -->
+    <section id="statistics" class="page p-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-semibold">Статистика: Восточное УЖКС</h1>
+          <p class="text-sm text-gray-500">Одна карточка Суперчата — одно обращение. Входящие сообщения считаются отдельно.</p>
+        </div>
+        <div class="flex gap-2">
+          <button class="border rounded-lg px-3 py-2 text-sm bg-white">Обновить</button>
+          <button class="border rounded-lg px-3 py-2 text-sm bg-white">CSV</button>
+          <button class="border rounded-lg px-3 py-2 text-sm bg-white">XLSX</button>
+        </div>
+      </div>
+
+      <div class="flex gap-2 mb-6 text-sm">
+        <button class="px-4 py-2 rounded-lg bg-purple-600 text-white">Обзор</button>
+        <button class="px-4 py-2 rounded-lg bg-white border">Чаты</button>
+        <button class="px-4 py-2 rounded-lg bg-white border">Обращения</button>
+        <button class="px-4 py-2 rounded-lg bg-white border">Рассылки</button>
+      </div>
+
+      <div class="grid grid-cols-4 gap-4 mb-6">
+        <div class="bg-white border rounded-xl p-5">
+          <div class="text-sm text-gray-500">Требуют внимания</div>
+          <div class="text-3xl font-bold text-red-600">3 195</div>
+          <div class="text-xs text-gray-500 mt-1">Чаты без ответа</div>
+        </div>
+        <div class="bg-white border rounded-xl p-5">
+          <div class="text-sm text-gray-500">Чаты</div>
+          <div class="text-3xl font-bold">331</div>
+          <div class="text-xs text-green-600 mt-1">+42.9%</div>
+        </div>
+        <div class="bg-white border rounded-xl p-5">
+          <div class="text-sm text-gray-500">Активность</div>
+          <div class="text-3xl font-bold">303</div>
+          <div class="text-xs text-red-500 mt-1">-3.9%</div>
+        </div>
+        <div class="bg-white border rounded-xl p-5">
+          <div class="text-sm text-gray-500">Рассылки</div>
+          <div class="text-3xl font-bold">7</div>
+          <div class="text-xs text-red-500 mt-1">-41.7%</div>
+        </div>
+      </div>
+
+      <div class="bg-white border rounded-xl p-6 mb-6">
+        <div class="font-semibold mb-4">Динамика активности</div>
+        <div class="h-40 bg-gray-50 rounded flex items-end px-4 gap-1">
+          <div class="flex-1 bg-purple-300 rounded-t" style="height:40%"></div>
+          <div class="flex-1 bg-purple-400 rounded-t" style="height:55%"></div>
+          <div class="flex-1 bg-purple-500 rounded-t" style="height:70%"></div>
+          <div class="flex-1 bg-purple-600 rounded-t" style="height:85%"></div>
+          <div class="flex-1 bg-purple-400 rounded-t" style="height:45%"></div>
+          <div class="flex-1 bg-purple-300 rounded-t" style="height:30%"></div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-white border rounded-xl p-5">
+          <div class="font-semibold mb-3">Топ групповых чатов</div>
+          <table class="w-full text-sm">
+            <thead class="text-gray-500 text-xs"><tr><th class="text-left py-1">ЧАТ</th><th class="text-right">СООБЩЕНИЙ</th></tr></thead>
+            <tbody>
+              <tr class="border-t"><td class="py-2">ул. Карла Маркса, д. 5</td><td class="text-right">175</td></tr>
+              <tr class="border-t"><td class="py-2">ул. Советская, д. 137</td><td class="text-right">165</td></tr>
+              <tr class="border-t"><td class="py-2">ул. Баррикад, д. 54и</td><td class="text-right">150</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="bg-white border rounded-xl p-5">
+          <div class="font-semibold mb-3 text-red-600">Проблемы и внимание</div>
+          <div class="text-sm space-y-2">
+            <div class="flex justify-between"><span>Чаты без ответа</span><span class="font-bold text-red-600">3 195</span></div>
+            
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="bg-white border rounded-xl p-5">
+          <div class="font-semibold mb-3">Структура</div>
+         
+        </div>
+        <div class="bg-white border rounded-xl p-5">
+          <div class="font-semibold mb-3 text-black-600">Активность по УК</div>
+          
+        </div>
+      </div>
+    </section>
+
+    <!-- MAX чат -->
+    <section id="chats" class="page p-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-semibold">MAX чаты</h1>
+          <p class="text-sm text-gray-500">Каталог групп и диалогов, обнаруженных MAX-ботами.</p>
+        </div>
+        <div class="flex gap-2">
+          <button class="border rounded-lg px-3 py-2 text-sm">Обновить</button>
+          <button class="border rounded-lg px-3 py-2 text-sm">Управление тегами</button>
+          <button class="bg-purple-600 text-white rounded-lg px-3 py-2 text-sm">+ Добавить чат</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-5 gap-3 mb-6">
+        <div class="bg-white border rounded-xl p-4 text-center"><div class="text-xs text-gray-500">Всего групп</div><div class="text-2xl font-bold">292</div></div>
+        
+        <div class="bg-white border rounded-xl p-4 text-center"><div class="text-xs text-gray-500">Активные</div><div class="text-2xl font-bold text-green-600">291</div></div>
+        <div class="bg-white border rounded-xl p-4 text-center"><div class="text-xs text-gray-500">В рассылках</div><div class="text-2xl font-bold">292</div></div>
+        <div class="bg-white border rounded-xl p-4 text-center"><div class="text-xs text-gray-500">Ошибки</div><div class="text-2xl font-bold text-red-600">1</div></div>
+      </div>
+
+      <div class="bg-white border rounded-xl overflow-hidden">
+        <div class="p-3 border-b flex gap-2">
+          <input class="flex-1 border rounded-lg px-3 py-2 text-sm" placeholder="Поиск по названию или ID...">
+          <select class="border rounded-lg px-3 py-2 text-sm"><option>Все статусы</option></select>
+          <select class="border rounded-lg px-3 py-2 text-sm"><option>Все теги</option></select>
+          <select class="border rounded-lg px-3 py-2 text-sm"><option>Все УК/боты</option></select>
+          <select class="border rounded-lg px-3 py-2 text-sm"><option>Все рассылки</option></select>
+          <select class="border rounded-lg px-3 py-2 text-sm"><option>Груповые чаты</option></select>
+        </div>
+        <table class="w-full text-sm">
+          
+          <thead class="bg-gray-50 text-xs text-gray-500"><tr>
+            <th class="p-3 text-left">ЧАТ</th>
+            <th class="p-3 text-left bg-purple-100">ТЕГИ</th>
+            <th class="p-3">СТАТУС</th>
+            <th class="p-3">РАССЫЛКА</th>
+            <th class="p-3 text-right">СООБЩЕНИЯ</th>
+            <th class="p-3 bg-purple-50 text-center">ДЕЙСТВИЯ</th>
+          </tr></thead>
+        <tbody>
+        <tr class="border-t hover:bg-gray-50">
+    <td class="p-3"><div class="font-medium">б-р. Гагарина, д. 42</div><div class="text-xs text-gray-400">групповой чат</div></td>
+    <td class="p-3 bg-purple-50/40">
+      <span class="tag font-medium">Правобережный ·ук</span>
+      <button class="ml-1 text-purple-600 text-xs hover:underline">+</button>
+    </td>
+    <td class="p-3"><span class="status-active text-xs px-2 py-1 rounded">Активен</span></td>
+    <td class="p-3"><span class="status-broadcast text-xs px-2 py-1 rounded">Включена</span></td>
+    <td class="p-3 text-right font-medium">27</td>
+    <td class="p-3 bg-purple-50/40 text-center">
+      <button class="text-purple-600 hover:text-purple-800 px-1" title="Сообщение">💬</button>
+      <button class="text-gray-600 hover:text-gray-900 px-1" title="Редактировать">✎</button>
+      <button class="text-gray-600 hover:text-gray-900 px-1" title="Ещё">···</button>
+    </td>
+  </tr>
+  
+</tbody>
+        </table>
+        <div class="p-3 text-xs text-gray-500 border-t">Показано 1–8 из 292</div>
+      </div>
+    </section>
+
+    <!-- Рассылки -->
+    <section id="broadcasts" class="page p-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-semibold">Рассылки MAX</h1>
+          <p class="text-sm text-gray-500">Отправляйте сообщения в групповые чаты MAX и личные диалоги.</p>
+        </div>
+        <button class="border rounded-lg px-3 py-2 text-sm">Обновить статусы</button>
+      </div>
+
+      <div class="grid grid-cols-12 gap-6">
+        <div class="col-span-7 space-y-3">
+          <div class="bg-white border rounded-xl overflow-hidden">
+            <button onclick="toggleAccordion(1)" class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50">
+              <div class="flex items-center gap-3">
+                <span class="w-6 h-6 rounded-full bg-purple-600 text-white text-xs flex items-center justify-center font-medium">1</span>
+                <span class="font-semibold">Сообщение</span>
+              </div>
+              <span id="acc-icon-1" class="text-gray-400">▼</span>
+            </button>
+            <div id="acc-1" class="px-5 pb-5 border-t">
+              <textarea class="w-full border rounded-lg p-3 text-sm h-32 mt-3" placeholder="Введите текст рассылки..."></textarea>
+              <div class="mt-3 border-2 border-dashed rounded-lg p-4 text-center text-sm text-gray-500">
+                Перетащите изображения или вставьте Ctrl+V · PNG, JPG, WebP · до 5 МБ
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white border rounded-xl overflow-hidden">
+            <button onclick="toggleAccordion(2)" class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50">
+              <div class="flex items-center gap-3">
+                <span class="w-6 h-6 rounded-full bg-gray-200 text-gray-700 text-xs flex items-center justify-center font-medium">2</span>
+                <span class="font-semibold">Получатели</span>
+                <span class="text-xs text-gray-400 ml-2">Не настроено</span>
+              </div>
+              <span id="acc-icon-2" class="text-gray-400">▶</span>
+            </button>
+            <div id="acc-2" class="px-5 pb-5 border-t hidden">
+              <div class="flex gap-2 mb-3 text-sm mt-3">
+                <button class="px-3 py-1.5 bg-purple-600 text-white rounded-lg">Все чаты</button>
+                <button class="px-3 py-1.5 border rounded-lg">По УК / ботам</button>
+                <button class="px-3 py-1.5 border rounded-lg">По тегам</button>
+                <button class="px-3 py-1.5 border rounded-lg">Выбранные</button>
+                <button class="px-3 py-1.5 border rounded-lg">Личные диалоги</button>
+              </div>
+              <div class="text-sm text-gray-600">Восточное УЖКС · 292 чата</div>
+              <div class="mt-2 text-xs text-gray-400">Предварительно выбрано: 292 · точный итог появится после проверки.</div>
+            </div>
+          </div>
+
+          <div class="bg-white border rounded-xl overflow-hidden">
+            <button onclick="toggleAccordion(3)" class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50">
+              <div class="flex items-center gap-3">
+                <span class="w-6 h-6 rounded-full bg-gray-200 text-gray-700 text-xs flex items-center justify-center font-medium">3</span>
+                <span class="font-semibold">Исключения и безопасность</span>
+              </div>
+              <span id="acc-icon-3" class="text-gray-400">▶</span>
+            </button>
+            <div id="acc-3" class="px-5 pb-5 border-t hidden">
+              <div class="mt-3 space-y-2">
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox"> Исключить чаты по тегам</label>
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox"> Исключить выбранные чаты</label>
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked> Исключить чаты с ошибками</label>
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked> Исключить чаты с отключённой рассылкой</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-span-5">
+          <div class="bg-white border rounded-xl p-5 sticky top-6">
+            <div class="font-semibold mb-3">Предпросмотр сообщения</div>
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-sm text-gray-500 text-center h-40 flex items-center justify-center">
+              Начните вводить сообщение или добавьте изображение
+            </div>
+            <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
+              Изменения не проверены. Проверьте получателей перед отправкой.
+            </div>
+            <div class="mt-4 flex gap-2">
+              <button class="flex-1 border rounded-lg py-2 text-sm">Проверить получателей</button>
+              <button class="flex-1 bg-purple-600 text-white rounded-lg py-2 text-sm">Отправить рассылку</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ключи -->
+    <section id="keys" class="page p-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-semibold">ЖКХ ключи</h1>
+          <p class="text-sm text-gray-500">Настройка словаря обращений выбранной управляющей компании.</p>
+        </div>
+        <button class="border rounded-lg px-3 py-2 text-sm">Обновить</button>
+      </div>
+
+      <div class="bg-white border rounded-xl p-4 mb-4 flex items-center gap-4 text-sm">
+        <span class="text-gray-500">ОБЛАСТЬ ПРАВИЛ</span>
+        <button class="px-3 py-1 bg-purple-100 text-purple-700 rounded">Организация</button>
+        <button class="px-3 py-1 border rounded">УК</button>
+        <select class="border rounded px-2 py-1"><option>Основная организация</option></select>
+      </div>
+ <div class="flex gap-2 mb-4 text-sm">
+        <button class="px-4 py-2 border-b-2 border-purple-600 font-medium">Ключевые слова</button>
+        <button class="px-4 py-2 text-gray-500">Слова исключения</button>
+        <button class="px-4 py-2 text-gray-500">Исключение подсветки</button>
+      </div>
+
+
+
+      <div class="bg-white border rounded-xl p-5 mb-4">
+        <textarea class="w-full border rounded-lg p-3 text-sm h-24" placeholder="Введите слова или фразы через запятую..."></textarea>
+        <div class="flex items-center justify-between mt-3 flex-wrap gap-3">
+          <div class="flex items-center gap-3 text-sm">
+            
+            <span class="text-gray-400">·</span>
+            <span class="text-gray-500">Сила:</span>
+            <button class="px-3 py-1 bg-purple-600 text-white rounded text-xs">Сильное</button>
+            <button class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded text-xs">Слабое</button>
+          </div>
+          <button class="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm">+ Добавить</button>
+        </div>
+      </div>
+<div class="flex items-center gap-3 mb-4">
+        <div class="flex gap-2 text-sm">
+          <span class="px-3 py-1 bg-white border rounded">Всего: 0</span>
+          <span class="px-3 py-1 bg-white border rounded">Сильные: 0</span>
+          <span class="px-3 py-1 bg-white border rounded">Слабые: 0</span>
+        </div>
+        <div class="flex-1"></div>
+        <input class="border rounded-lg px-3 py-2 text-sm w-64" placeholder="Поиск по словам...">
+        <div class="flex text-sm">
+          <button class="px-3 py-1.5 bg-purple-600 text-white rounded-l-lg">Все</button>
+          <button class="px-3 py-1.5 border border-l-0">Сильные</button>
+          <button class="px-3 py-1.5 border border-l-0 rounded-r-lg">Слабые</button>
+        </div>
+      </div>
+      <div class="mt-6 bg-white border rounded-xl p-12 text-center text-gray-500">
+        <div class="text-lg font-medium mb-1">Ключей для выбранной УК пока нет</div>
+        <div class="text-sm">Добавьте первые ключи через поле выше (например: сантехник, шлагбаум, уборка)</div>
+      </div>
+    </section>
+
+  
+
+    <!-- градусник -->
+    <section id="heat" class="page p-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-semibold">Градусник</h1>
+          <p class="text-sm text-gray-500">Недовольство жителей работой управляющей компании: причина, накал и цитаты из чата.</p>
+        </div>
+      </div>
+
+      <div class="flex gap-2 mb-4 text-sm">
+        <button class="px-4 py-2 border-b-2 border-purple-600 font-medium">Лента</button>
+        <button class="px-4 py-2 text-gray-500">Сводка</button>
+        <button class="px-4 py-2 text-gray-500">Словарь</button>
+      </div>
+
+      <div class="bg-white border rounded-xl p-4 mb-4 flex flex-wrap gap-3 text-sm">
+        <select class="border rounded px-2 py-1"><option>Инциденты</option><option>Все запуски</option></select>
+        <select class="border rounded px-2 py-1"><option>Любой триггер</option></select>
+        <select class="border rounded px-2 py-1"><option>Любой статус</option></select>
+        <select class="border rounded px-2 py-1"><option>Все доступные УК</option></select>
+      </div>
+
+      <div class="bg-white border rounded-xl overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 text-xs text-gray-500"><tr>
+            <th class="p-3 text-left">КОГДА</th>
+            <th class="p-3 text-left">ЧАТ</th>
+            <th class="p-3 text-left">ТРИГГЕР</th>
+            <th class="p-3 text-left">РЕЗУЛЬТАТ</th>
+            <th class="p-3">СООБЩЕНИЙ</th>
+          </tr></thead>
+          <tbody>
+            <tr class="border-t hover:bg-gray-50 cursor-pointer">
+              <td class="p-3 text-xs">17.10, 18:45</td>
+              <td class="p-3">пер. Археолога Михаила Герасимова, д. 11</td>
+              <td class="p-3">Всплеск активности</td>
+              <td class="p-3"><span class="heat-badge heat-2">2</span> <span class="ml-2">Эдвард прочитал мысли двух этажей</span></td>
+              <td class="p-3 text-center">15</td>
+            </tr>
+            <tr class="border-t hover:bg-gray-50 cursor-pointer">
+              <td class="p-3 text-xs">16.10, 12:17</td>
+              <td class="p-3">ул. Баррикад, д. 54и</td>
+              <td class="p-3">Краевая фраза</td>
+              <td class="p-3"><span class="heat-badge heat-5">5</span> <span class="ml-2">Джейкоб бездействует</span></td>
+              <td class="p-3 text-center">1</td>
+            </tr>
+            <tr class="border-t hover:bg-gray-50 cursor-pointer">
+              <td class="p-3 text-xs">15.10, 21:33</td>
+              <td class="p-3">ул. Ямская, д. 33</td>
+              <td class="p-3">Краевая фраза</td>
+              <td class="p-3"><span class="heat-badge heat-2">2</span> <span class="ml-2">Белла орет во сне</span></td>
+              <td class="p-3 text-center">8</td>
+            </tr>
+            <tr class="border-t hover:bg-gray-50 cursor-pointer">
+              <td class="p-3 text-xs">15.10, 17:18</td>
+              <td class="p-3">ул. Карла Маркса, д. 5</td>
+              <td class="p-3">Краевая фраза</td>
+              <td class="p-3"><span class="heat-badge heat-3">3</span> <span class="ml-2">Доктор каллен приехал без бахил</span></td>
+              <td class="p-3 text-center">22</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+
+     <!-- Слова модерации -->
+    <section id="moderation" class="page p-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-semibold">Слова модерации</h1>
+          <p class="text-sm text-gray-500">Настройка слов и фраз для модерации (нежелательный контент, мат, спам).</p>
+        </div>
+        <button class="border rounded-lg px-3 py-2 text-sm">Обновить</button>
+      </div>
+
+      <div class="bg-white border rounded-xl p-4 mb-4 flex items-center gap-4 text-sm">
+        <span class="text-gray-500">ОБЛАСТЬ ПРАВИЛ</span>
+        <button class="px-3 py-1 bg-orange-100 text-orange-700 rounded">Организация</button>
+        <button class="px-3 py-1 border rounded">УК</button>
+        <select class="border rounded px-2 py-1"><option>Основная организация</option></select>
+      </div>
+
+      <div class="flex gap-2 mb-4 text-sm">
+        <button class="px-4 py-2 border-b-2 border-orange-500 font-medium">Ключевые слова</button>
+        <button class="px-4 py-2 text-gray-500">Ограничения</button>
+      </div>
+
+      <div class="bg-white border rounded-xl p-5 mb-4">
+        <textarea class="w-full border rounded-lg p-3 text-sm h-24" placeholder="Введите слова или фразы через запятую..."></textarea>
+        <div class="flex items-center justify-between mt-3 flex-wrap gap-3">
+          <div class="flex items-center gap-3 text-sm">
+            
+          </div>
+          <button class="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm">+ Добавить</button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="flex gap-2 text-sm">
+          <span class="px-3 py-1 bg-white border rounded">Всего: 0</span>
+        </div>
+        <div class="flex-1"></div>
+        <input class="border rounded-lg px-3 py-2 text-sm w-64" placeholder="Поиск по словам...">
+      </div>
+
+      <div class="bg-white border rounded-xl p-12 text-center text-gray-500">
+        <div class="text-lg font-medium mb-1">Слов модерации для выбранной УК пока нет</div>
+        <div class="text-sm">Добавьте слова через поле выше (например: мат, спам, реклама)</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+  function toggleAccordion(n) {
+  const content = document.getElementById('acc-' + n);
+  const icon = document.getElementById('acc-icon-' + n);
+  if (content.classList.contains('hidden')) {
+    content.classList.remove('hidden');
+    icon.textContent = '▼';
+  } else {
+    content.classList.add('hidden');
+    icon.textContent = '▶';
+  }
+}
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(page).classList.add('active');
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  document.querySelector(`[data-page="${page}"]`).classList.add('active');
+}
+
+document.querySelectorAll('.sidebar-item').forEach(item => {
+  item.addEventListener('click', (e) => {
+    e.preventDefault();
+    showPage(item.dataset.page);
+  });
+});
+
+function switchMonitor(mode) {
+  document.getElementById('tab-super').className = mode === 'super' 
+    ? 'px-4 py-2 rounded-lg bg-purple-600 text-white text-sm font-medium'
+    : 'px-4 py-2 rounded-lg bg-white border text-sm';
+  document.getElementById('tab-all').className = mode === 'all'
+    ? 'px-4 py-2 rounded-lg bg-purple-600 text-white text-sm font-medium'
+    : 'px-4 py-2 rounded-lg bg-white border text-sm';
+  
+}
+</script>
+</body>
+</html>
